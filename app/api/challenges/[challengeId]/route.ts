@@ -155,6 +155,14 @@ export async function GET(
       }
     }
 
+    // Ensure challenge is still valid after any auto-finalization attempt
+    if (!challenge) {
+      return NextResponse.json(
+        { error: "Challenge not found" },
+        { status: 404 }
+      );
+    }
+
     // Check if the current user is related to this challenge
     // They must be either:
     // 1. Creator of fromCrew
