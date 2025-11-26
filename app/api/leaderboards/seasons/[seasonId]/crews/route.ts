@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { computePnL } from "@/lib/pnl/engine";
-import { computeSeasonCrewLeaderboard } from "@/lib/leaderboard/season-crew-engine";
-import { getSeasonTimeWindow } from "@/lib/seasons/utils";
-import { LeaderboardMetric } from "@/lib/leaderboard/types";
+import type { LeaderboardMetric } from "@/lib/leaderboard/types";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/leaderboards/seasons/[seasonId]/crews
@@ -29,6 +26,12 @@ export async function GET(
   { params }: { params: { seasonId: string } }
 ) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { computeSeasonCrewLeaderboard } = await import("@/lib/leaderboard/season-crew-engine");
+    const { getSeasonTimeWindow } = await import("@/lib/seasons/utils");
+
     const session = await auth();
 
     if (!session?.user?.id) {
