@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 // Allowed fields for user card settings
 const ALLOWED_STRING_FIELDS = [
@@ -21,6 +21,10 @@ const ALLOWED_BOOLEAN_FIELDS = [
 // GET - Fetch user card settings
 export async function GET() {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -48,6 +52,10 @@ export async function GET() {
 // POST - Create or update user card settings
 export async function POST(request: Request) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {

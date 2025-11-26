@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    // Dynamic import to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+
     const session = await auth();
 
     if (!session?.user?.id) {

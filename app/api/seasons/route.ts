@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/seasons
@@ -8,6 +9,9 @@ import { prisma } from "@/lib/prisma";
  */
 export async function GET() {
   try {
+    // Dynamic import to avoid build-time initialization
+    const { prisma } = await import("@/lib/prisma");
+
     const seasons = await prisma.season.findMany({
       orderBy: {
         startAt: "desc",

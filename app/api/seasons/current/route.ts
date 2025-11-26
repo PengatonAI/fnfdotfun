@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getCurrentSeason } from "@/lib/seasons/utils";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/seasons/current
@@ -9,6 +9,10 @@ import { getCurrentSeason } from "@/lib/seasons/utils";
  */
 export async function GET() {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { prisma } = await import("@/lib/prisma");
+    const { getCurrentSeason } = await import("@/lib/seasons/utils");
+
     const season = await getCurrentSeason(prisma);
 
     return NextResponse.json(season);

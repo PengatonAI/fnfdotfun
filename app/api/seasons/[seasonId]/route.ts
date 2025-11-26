@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/seasons/[seasonId]
@@ -11,6 +12,9 @@ export async function GET(
   { params }: { params: { seasonId: string } }
 ) {
   try {
+    // Dynamic import to avoid build-time initialization
+    const { prisma } = await import("@/lib/prisma");
+
     const { seasonId } = params;
 
     const season = await prisma.season.findUnique({

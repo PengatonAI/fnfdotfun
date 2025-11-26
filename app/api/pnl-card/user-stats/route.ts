@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { computePnL } from "@/lib/pnl/engine";
 import { subDays } from "date-fns";
+
+export const dynamic = "force-dynamic";
 
 // Valid time ranges
 const VALID_RANGES = ["24h", "7d", "30d", "all"] as const;
@@ -30,6 +29,11 @@ function getTimeWindow(range: string): { startDate?: Date; endDate?: Date } {
 // GET - Fetch user PnL stats for card
 export async function GET(request: Request) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { computePnL } = await import("@/lib/pnl/engine");
+
     const session = await auth();
 
     if (!session?.user?.id) {

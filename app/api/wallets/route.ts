@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 // GET - List all wallets for the logged-in user
 export async function GET() {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -36,6 +40,10 @@ export async function GET() {
 // POST - Add a new wallet
 export async function POST(request: Request) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {

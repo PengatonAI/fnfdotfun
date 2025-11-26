@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { normalizeChain } from "@/lib/utils/normalize-chain";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  // Dynamic imports to avoid build-time initialization
+  const { auth } = await import("@/lib/auth");
+  const { prisma } = await import("@/lib/prisma");
+  const { normalizeChain } = await import("@/lib/utils/normalize-chain");
+
   console.log("WALLET CONNECT API HIT");
 
   const body = await request.json();

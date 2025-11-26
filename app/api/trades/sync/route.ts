@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { syncEvmWalletTrades, getEvmTrades } from "@/lib/trades/evm-sync";
-// import { syncSolanaWalletTrades, getSolanaTrades } from "@/lib/trades/solana-sync"; // Commented out - Solana support disabled
-import { saveCanonicalTrades } from "@/lib/trades/persist";
-import { normalizeChain } from "@/lib/utils/normalize-chain";
-import { initSync, setDone, setError } from "@/lib/trades/sync-status";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { syncEvmWalletTrades, getEvmTrades } = await import("@/lib/trades/evm-sync");
+    const { saveCanonicalTrades } = await import("@/lib/trades/persist");
+    const { normalizeChain } = await import("@/lib/utils/normalize-chain");
+    const { initSync, setDone, setError } = await import("@/lib/trades/sync-status");
+
     // Initialize sync progress tracking
     initSync();
     

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { randomBytes } from "crypto";
+
+export const dynamic = "force-dynamic";
 
 // Valid card types
 const VALID_TYPES = ["user", "crew"] as const;
@@ -13,6 +13,10 @@ const VALID_RANGES = ["24h", "7d", "30d", "all"] as const;
 // POST - Create a shareable card link
 export async function POST(request: Request) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {

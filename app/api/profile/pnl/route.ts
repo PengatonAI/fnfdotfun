@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { computePnL } from "@/lib/pnl/engine";
-import { pricingProvider } from "@/lib/pnl/current-prices";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { computePnL } = await import("@/lib/pnl/engine");
+    const { pricingProvider } = await import("@/lib/pnl/current-prices");
+
     const session = await auth();
 
     if (!session?.user?.id) {

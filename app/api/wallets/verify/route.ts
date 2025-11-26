@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { recoverMessageAddress } from "viem";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {

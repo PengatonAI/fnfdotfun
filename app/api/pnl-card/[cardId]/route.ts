@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 // GET - Fetch shared card data (public endpoint - no auth required)
 export async function GET(
@@ -7,6 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ cardId: string }> }
 ) {
   try {
+    // Dynamic import to avoid build-time initialization
+    const { prisma } = await import("@/lib/prisma");
+
     const { cardId } = await params;
 
     // Fetch card by shareToken

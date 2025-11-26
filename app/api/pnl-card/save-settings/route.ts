@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { computePnL } from "@/lib/pnl/engine";
 import { subDays } from "date-fns";
+
+export const dynamic = "force-dynamic";
 
 // Valid card modes
 const VALID_MODES = ["user", "crew"] as const;
@@ -36,6 +35,11 @@ function getTimeWindow(range: string): { startDate?: Date; endDate?: Date } {
 // POST - Save user's PnL card settings
 export async function POST(request: Request) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { computePnL } = await import("@/lib/pnl/engine");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -240,6 +244,10 @@ export async function POST(request: Request) {
 // GET - Fetch user's saved PnL card settings
 export async function GET() {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {

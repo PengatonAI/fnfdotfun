@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { computePnL } from "@/lib/pnl/engine";
+
+export const dynamic = "force-dynamic";
 
 /**
  * POST /api/seasons/[seasonId]/snapshot
@@ -18,6 +18,10 @@ export async function POST(
   { params }: { params: { seasonId: string } }
 ) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { prisma } = await import("@/lib/prisma");
+    const { computePnL } = await import("@/lib/pnl/engine");
+
     const { seasonId } = params;
 
     // Verify season exists
