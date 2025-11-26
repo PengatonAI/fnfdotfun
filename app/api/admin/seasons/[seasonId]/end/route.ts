@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/admin/seasons/[seasonId]/end
  * 
@@ -10,10 +12,10 @@ import { prisma } from "@/lib/prisma";
  */
 export async function POST(
   request: Request,
-  { params }: { params: { seasonId: string } }
+  { params }: { params: Promise<{ seasonId: string }> }
 ) {
   try {
-    const { seasonId } = params;
+    const { seasonId } = await params;
 
     // 1. Verify user session
     const session = await auth();
