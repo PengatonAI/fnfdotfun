@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 /**
  * POST /api/admin/seasons/create
@@ -10,6 +11,10 @@ import { prisma } from "@/lib/prisma";
  */
 export async function POST(request: Request) {
   try {
+    // Dynamic imports to prevent build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     // 1. Verify user session
     const session = await auth();
 
@@ -19,7 +24,7 @@ export async function POST(request: Request) {
 
     // Admin authorization: only X user with username "nanoxbt" can create seasons or tournaments
     if (!session?.user?.username || session.user.username !== "nanoxbt") {
-      return new Response(JSON.stringify({ error: "Admin access required" }), { status: 403 });
+      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
     }
 
     // 3. Parse request body
@@ -110,4 +115,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

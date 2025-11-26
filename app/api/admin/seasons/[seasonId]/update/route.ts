@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 /**
  * POST /api/admin/seasons/[seasonId]/update
@@ -9,10 +10,14 @@ import { prisma } from "@/lib/prisma";
  */
 export async function POST(
   request: Request,
-  { params }: { params: { seasonId: string } }
+  { params }: { params: Promise<{ seasonId: string }> }
 ) {
   try {
-    const { seasonId } = params;
+    // Dynamic imports to prevent build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
+    const { seasonId } = await params;
 
     // 1. Verify user session
     const session = await auth();
@@ -126,4 +131,3 @@ export async function POST(
     );
   }
 }
-
