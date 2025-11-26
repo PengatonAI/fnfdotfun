@@ -1,8 +1,4 @@
 import { Navbar } from "@/components/navbar";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { isSeasonActive } from "@/lib/seasons/utils";
 import CreateTournamentForm from "./create-tournament-form";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +15,10 @@ function formatDate(date: Date | string): string {
 }
 
 export default async function AdminSeasonsPage() {
+  // Dynamic imports to avoid build-time initialization
+  const { auth } = await import("@/lib/auth");
+  const { prisma } = await import("@/lib/prisma");
+
   const session = await auth();
 
   if (!session?.user?.id) {
