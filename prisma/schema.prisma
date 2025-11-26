@@ -1,0 +1,395 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                       String                    @id @default(cuid())
+  name                     String?
+  email                    String?                   @unique
+  emailVerified            DateTime?
+  image                    String?
+  username                 String?                   @unique
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  xHandle                  String?
+  accounts                 Account[]
+  createdCrews             Crew[]                    @relation("CrewCreator")
+  crewActivities           CrewActivity[]
+  joinRequests             CrewJoinRequest[]
+  crews                    CrewMember[]
+  sessions                 Session[]
+  trades                   Trade[]
+  wallets                  Wallet[]
+  walletSyncStates         WalletSyncState[]
+  walletVerificationNonces WalletVerificationNonce[]
+  seasonSnapshots          SeasonUserSnapshot[]
+  tournamentParticipants   TournamentParticipant[]
+  challengesCreated        Challenge[]               @relation("ChallengeCreator")
+  challengesDecided        Challenge[]               @relation("ChallengeDecidedBy")
+  cardSettings             UserCardSettings?
+  sharedCards              SharedCard[]              @relation("UserSharedCards")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Crew {
+  id                     String                      @id @default(cuid())
+  name                   String                      @unique
+  description            String?
+  openToMembers          Boolean                     @default(true)
+  createdByUserId        String
+  createdAt              DateTime                    @default(now())
+  updatedAt              DateTime                    @updatedAt
+  avatarUrl              String?
+  bannerUrl              String?
+  bio                    String?
+  tagline                String?
+  createdBy              User                        @relation("CrewCreator", fields: [createdByUserId], references: [id], onDelete: Cascade)
+  activities             CrewActivity[]
+  joinRequests           CrewJoinRequest[]
+  members                CrewMember[]
+  inviteTokens           InviteToken[]
+  tournamentParticipants TournamentCrewParticipant[]
+  challengesFrom         Challenge[]                 @relation("ChallengesFromCrew")
+  challengesTo           Challenge[]                 @relation("ChallengesToCrew")
+  challengesWon          Challenge[]                 @relation("ChallengesWinnerCrew")
+  cardSettings           CrewCardSettings?
+  sharedCards            SharedCard[]                @relation("CrewSharedCards")
+}
+
+model CrewMember {
+  id       String   @id @default(cuid())
+  crewId   String
+  userId   String
+  role     String   @default("member")
+  joinedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crew     Crew     @relation(fields: [crewId], references: [id], onDelete: Cascade)
+
+  @@unique([crewId, userId])
+}
+
+model Wallet {
+  id          String   @id @default(cuid())
+  userId      String
+  address     String
+  chain       String
+  label       String?
+  verified    Boolean  @default(false)
+  connectedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  trades      Trade[]
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, address], name: "userId_address")
+  @@unique([address, chain], name: "walletAddress_chain")
+}
+
+model WalletVerificationNonce {
+  id        String   @id @default(cuid())
+  userId    String
+  address   String
+  nonce     String
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, address])
+  @@index([nonce])
+}
+
+model InviteToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  crewId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  crew      Crew     @relation(fields: [crewId], references: [id], onDelete: Cascade)
+}
+
+model CrewJoinRequest {
+  id        String    @id @default(cuid())
+  userId    String
+  crewId    String
+  status    String
+  createdAt DateTime  @default(now())
+  decidedAt DateTime?
+  decidedBy String?
+  crew      Crew      @relation(fields: [crewId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, crewId], name: "userId_crewId_unique")
+}
+
+model CrewActivity {
+  id        String   @id @default(cuid())
+  crewId    String
+  userId    String?
+  type      String
+  message   String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+  crew      Crew     @relation(fields: [crewId], references: [id], onDelete: Cascade)
+}
+
+model Trade {
+  id                  String   @id @default(cuid())
+  userId              String
+  walletId            String
+  walletAddress       String
+  chain               String
+  platform            String
+  direction           String
+  baseTokenAddress    String
+  quoteTokenAddress   String
+  baseAmount          String
+  quoteAmount         String
+  price               Float?
+  nativePrice         Float? // Stores the USD price of the chain's native token (ETH, SOL) at the time of the trade
+  usdPricePerToken    Float? // Stores the calculated USD price per token at the time of the trade (for proof system)
+  usdValue            Float? // Stores the total USD value of the trade (for proof system)
+  tokenInSymbol       String?
+  tokenOutSymbol      String?
+  tokenNameIn         String?
+  tokenNameOut        String?
+  normalizedAmountIn  Float?
+  normalizedAmountOut Float?
+  decimalsIn          Int?
+  decimalsOut         Int?
+  feeAmount           String?
+  feeTokenAddress     String?
+  txHash              String
+  txIndex             Int?
+  timestamp           DateTime
+  raw                 String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  wallet              Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([walletAddress, chain, txHash], name: "unique_trade")
+  @@index([txIndex])
+  @@index([userId])
+  @@index([walletAddress, chain])
+  @@index([timestamp])
+  @@index([userId, timestamp])
+}
+
+model WalletSyncState {
+  id               String   @id @default(cuid())
+  userId           String
+  walletAddress    String
+  chain            String
+  lastSyncedCursor String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, walletAddress, chain], name: "unique_sync_state")
+  @@index([userId])
+}
+
+model Season {
+  id            String   @id @default(cuid())
+  name          String
+  startAt       DateTime
+  endAt         DateTime
+  isTournament  Boolean  @default(false)
+  createdBy     String? // admin user ID for tournaments
+  visibility    String? // "public" | "private"
+  allowedChains String? // JSON string: ["EVM", "SOL"] or null for all
+  allowedUsers  String? // JSON string: optional whitelist of user IDs
+  allowedCrews  String? // JSON string: optional whitelist of crew IDs
+  rules         String? // Tournament rules text
+  description   String? // Tournament description text
+  allowUserJoin Boolean? @default(true)
+  allowCrewJoin Boolean? @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  snapshots        SeasonUserSnapshot[]
+  participants     TournamentParticipant[]
+  crewParticipants TournamentCrewParticipant[]
+}
+
+model SeasonUserSnapshot {
+  id          String   @id @default(cuid())
+  seasonId    String
+  userId      String
+  realizedPnl Float    @default(0)
+  totalPnl    Float    @default(0)
+  volume      Float    @default(0)
+  totalTrades Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  season Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, userId])
+  @@index([userId])
+}
+
+model TournamentParticipant {
+  id        String   @id @default(cuid())
+  seasonId  String
+  userId    String
+  createdAt DateTime @default(now())
+
+  season Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, userId])
+}
+
+model TournamentCrewParticipant {
+  id        String   @id @default(cuid())
+  seasonId  String
+  crewId    String
+  createdAt DateTime @default(now())
+
+  season Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  crew   Crew   @relation(fields: [crewId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, crewId])
+}
+
+model Challenge {
+  id String @id @default(cuid())
+
+  // Crews involved
+  fromCrewId String
+  toCrewId   String
+  fromCrew   Crew   @relation("ChallengesFromCrew", fields: [fromCrewId], references: [id])
+  toCrew     Crew   @relation("ChallengesToCrew", fields: [toCrewId], references: [id])
+
+  // Creator of the challenge (must be creator of fromCrew)
+  createdById String
+  createdBy   User   @relation("ChallengeCreator", fields: [createdById], references: [id])
+
+  // Status: "pending" | "active" | "completed" | "declined" | "cancelled"
+  status String @default("pending")
+
+  // Type of challenge (MVP = "pnl")
+  type String @default("pnl")
+
+  // Challenge duration in hours (e.g. 24, 72, 168)
+  durationHours Int
+
+  // Visibility: "public" or "private"
+  visibility String @default("public")
+
+  // Future-proof JSON rules (optional for MVP, stored as JSON string)
+  rules String?
+
+  // Timestamps for accepted challenges
+  startAt DateTime?
+  endAt   DateTime?
+
+  // When the challenge was accepted or declined
+  decidedAt   DateTime?
+  decidedById String?
+  decidedBy   User?     @relation("ChallengeDecidedBy", fields: [decidedById], references: [id])
+
+  // Winner crew (null until challenge ends)
+  winnerCrewId String?
+  winnerCrew   Crew?   @relation("ChallengesWinnerCrew", fields: [winnerCrewId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fromCrewId])
+  @@index([toCrewId])
+  @@index([status])
+}
+
+model UserCardSettings {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  theme           String   @default("default")
+  showAvatar      Boolean  @default(true)
+  showUsername    Boolean  @default(true)
+  showPnl         Boolean  @default(true)
+  showVolume      Boolean  @default(true)
+  showWinRate     Boolean  @default(true)
+  showTotalTrades Boolean  @default(true)
+  backgroundColor String?
+  accentColor     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CrewCardSettings {
+  id              String   @id @default(cuid())
+  crewId          String   @unique
+  theme           String   @default("default")
+  showAvatar      Boolean  @default(true)
+  showName        Boolean  @default(true)
+  showPnl         Boolean  @default(true)
+  showVolume      Boolean  @default(true)
+  showMemberCount Boolean  @default(true)
+  showTotalTrades Boolean  @default(true)
+  backgroundColor String?
+  accentColor     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  crew            Crew     @relation(fields: [crewId], references: [id], onDelete: Cascade)
+}
+
+model SharedCard {
+  id           String    @id @default(cuid())
+  shareToken   String    @unique
+  cardType     String // "user" | "crew"
+  userId       String?
+  crewId       String?
+  snapshotData String // JSON string containing PnL data at time of share
+  timeframe    String? // e.g. "24h", "7d", "30d", "all"
+  seasonId     String?
+  expiresAt    DateTime?
+  viewCount    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  user         User?     @relation("UserSharedCards", fields: [userId], references: [id], onDelete: Cascade)
+  crew         Crew?     @relation("CrewSharedCards", fields: [crewId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([crewId])
+  @@index([shareToken])
+}
