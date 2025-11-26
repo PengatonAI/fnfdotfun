@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import {
-  buildCrewLeaderboardEntries,
-  CrewLeaderboardMetric,
-} from "@/lib/leaderboard/crew-engine";
-import { Timeframe } from "@/lib/leaderboard/types";
-import { getTimeWindow } from "@/lib/leaderboard/engine";
+import type { CrewLeaderboardMetric } from "@/lib/leaderboard/crew-engine";
+import type { Timeframe } from "@/lib/leaderboard/types";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { buildCrewLeaderboardEntries } = await import("@/lib/leaderboard/crew-engine");
+    const { getTimeWindow } = await import("@/lib/leaderboard/engine");
+
     const session = await auth();
 
     if (!session?.user?.id) {
