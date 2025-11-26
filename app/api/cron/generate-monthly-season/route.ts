@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { generateMonthlySeason } from "@/lib/seasons/generateMonthlySeason";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/cron/generate-monthly-season
@@ -55,6 +56,9 @@ export async function GET(request: Request) {
       );
     }
 
+    // Dynamic import to avoid build-time Prisma initialization
+    const { generateMonthlySeason } = await import("@/lib/seasons/generateMonthlySeason");
+    
     // Generate monthly season
     const result = await generateMonthlySeason();
 
