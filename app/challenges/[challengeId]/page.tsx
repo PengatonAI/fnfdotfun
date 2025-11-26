@@ -1,14 +1,18 @@
 import { Navbar } from "@/components/navbar";
 import { redirect, notFound } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import ChallengeBattleClient from "./challenge-battle-client";
+
+export const dynamic = "force-dynamic";
 
 export default async function ChallengeBattlePage({
   params,
 }: {
   params: Promise<{ challengeId: string }>;
 }) {
+  // Dynamic imports to avoid build-time initialization
+  const { auth } = await import("@/lib/auth");
+  const { prisma } = await import("@/lib/prisma");
+
   const session = await auth();
 
   if (!session?.user?.id) {
