@@ -1,8 +1,5 @@
 import { Navbar } from "@/components/navbar";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { isSeasonActive } from "@/lib/seasons/utils";
 import SeasonLeaderboardClient from "./season-leaderboard-client";
 import AdminTournamentControls from "./admin-tournament-controls";
 import JoinTournamentButton from "./join-tournament-button";
@@ -26,6 +23,11 @@ export default async function SeasonDetailPage({
 }: {
   params: { seasonId: string };
 }) {
+  // Dynamic imports to avoid build-time initialization
+  const { auth } = await import("@/lib/auth");
+  const { prisma } = await import("@/lib/prisma");
+  const { isSeasonActive } = await import("@/lib/seasons/utils");
+
   const session = await auth();
 
   if (!session) {

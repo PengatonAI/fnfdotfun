@@ -1,12 +1,5 @@
 import { Navbar } from "@/components/navbar";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { getCurrentSeason } from "@/lib/seasons/utils";
-import { computePnL } from "@/lib/pnl/engine";
-import { computeSeasonCrewLeaderboard } from "@/lib/leaderboard/season-crew-engine";
-import { getSeasonTimeWindow } from "@/lib/seasons/utils";
-import { buildUserLeaderboardEntries } from "@/lib/leaderboard/engine";
 import { DashboardPnLCard } from "./dashboard-pnl-card";
 import { CrewDashboardCard } from "./components/crew-dashboard-card";
 import { StatsDashboardCard } from "./components/stats-dashboard-card";
@@ -16,6 +9,14 @@ import { RecentTradesTable } from "./components/recent-trades-table";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
+  // Dynamic imports to avoid build-time initialization
+  const { auth } = await import("@/lib/auth");
+  const { prisma } = await import("@/lib/prisma");
+  const { getCurrentSeason, getSeasonTimeWindow } = await import("@/lib/seasons/utils");
+  const { computePnL } = await import("@/lib/pnl/engine");
+  const { computeSeasonCrewLeaderboard } = await import("@/lib/leaderboard/season-crew-engine");
+  const { buildUserLeaderboardEntries } = await import("@/lib/leaderboard/engine");
+
   const session = await auth();
 
   if (!session?.user?.id) {

@@ -1,8 +1,5 @@
 import { Navbar } from "@/components/navbar";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { isSeasonActive } from "@/lib/seasons/utils";
 import SeasonCrewLeaderboardClient from "./season-crew-leaderboard-client";
 import Link from "next/link";
 import { Calendar, Trophy, Users } from "lucide-react";
@@ -23,6 +20,11 @@ export default async function SeasonCrewLeaderboardPage({
 }: {
   params: { seasonId: string };
 }) {
+  // Dynamic imports to avoid build-time initialization
+  const { auth } = await import("@/lib/auth");
+  const { prisma } = await import("@/lib/prisma");
+  const { isSeasonActive } = await import("@/lib/seasons/utils");
+
   const session = await auth();
 
   if (!session) {

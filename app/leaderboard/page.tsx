@@ -1,7 +1,5 @@
 import { Navbar } from "@/components/navbar";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import LeaderboardClient from "./leaderboard-client";
 import Link from "next/link";
 import { Target, Users } from "lucide-react";
@@ -10,6 +8,9 @@ export const dynamic = "force-dynamic";
 
 async function getCurrentUserBasicInfo(userId: string) {
   try {
+    // Dynamic import to avoid build-time initialization
+    const { prisma } = await import("@/lib/prisma");
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -46,6 +47,9 @@ async function getCurrentUserBasicInfo(userId: string) {
 }
 
 export default async function LeaderboardPage() {
+  // Dynamic import to avoid build-time initialization
+  const { auth } = await import("@/lib/auth");
+
   const session = await auth();
 
   if (!session) {

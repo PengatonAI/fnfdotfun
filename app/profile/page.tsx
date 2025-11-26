@@ -1,12 +1,14 @@
 import { Navbar } from "@/components/navbar";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import ProfileClient from "./profile-client";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage() {
+  // Dynamic imports to avoid build-time initialization
+  const { auth } = await import("@/lib/auth");
+  const { prisma } = await import("@/lib/prisma");
+
   const session = await auth();
 
   // Debug logging
