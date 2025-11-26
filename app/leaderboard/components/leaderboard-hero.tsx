@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Trophy, TrendingUp, Crown, Users, BarChart3, Target } from "lucide-react";
 
 interface LeaderboardHeroProps {
@@ -94,10 +95,11 @@ export function LeaderboardHero({
               
               {avatar ? (
                 <div className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden border-2 border-[#2a2a2a] shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-                  <img
+                  <Image
                     src={avatar}
                     alt={title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
               ) : (
@@ -149,7 +151,7 @@ export function LeaderboardHero({
                     className="flex items-center gap-1.5 px-2.5 py-1 bg-accent/10 border border-accent/30 rounded-full hover:bg-accent/20 transition-colors"
                   >
                     {crewBadge.avatarUrl ? (
-                      <img src={crewBadge.avatarUrl} alt="" className="w-3.5 h-3.5 rounded-full" />
+                      <Image src={crewBadge.avatarUrl} alt="" width={14} height={14} className="rounded-full" />
                     ) : (
                       <Users className="w-3.5 h-3.5 text-accent" />
                     )}

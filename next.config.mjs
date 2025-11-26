@@ -51,6 +51,7 @@ const nextConfig = {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
+        'react-native-async-storage': false,
         '@react-native-async-storage/async-storage': false,
       };
     }

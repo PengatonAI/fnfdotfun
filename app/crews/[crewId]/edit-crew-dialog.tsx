@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 interface User {
@@ -199,10 +200,12 @@ export default function EditCrewDialog({
             </label>
             {avatarPreview && (
               <div className="mb-3 flex items-center gap-3">
-                <img
+                <Image
                   src={avatarPreview}
                   alt="Avatar preview"
-                  className="w-20 h-20 rounded-full object-cover border border-border"
+                  width={80}
+                  height={80}
+                  className="rounded-full object-cover border border-border"
                 />
                 <Button
                   type="button"

@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/swr-fetcher";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import EditCrewDialog from "./edit-crew-dialog";
 import InviteDialog from "./invite-dialog";
 import CreateChallengeDialog from "./create-challenge-dialog";
@@ -410,10 +411,11 @@ export default function CrewDetailsClient({
         {/* Banner Image Background */}
         {crew.bannerUrl && (
           <div className="absolute inset-0">
-            <img
+            <Image
               src={crew.bannerUrl}
               alt={`${crew.name} banner`}
-              className="w-full h-full object-cover opacity-20"
+              fill
+              className="object-cover opacity-20"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d]/90 to-transparent" />
           </div>
@@ -428,10 +430,11 @@ export default function CrewDetailsClient({
                 <div className="absolute -inset-1 bg-gradient-to-r from-accent/40 via-purple-500/40 to-pink-500/40 rounded-2xl blur-md opacity-60" />
                 {crew.avatarUrl ? (
                   <div className="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-[#2a2a2a] shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-                    <img
+                    <Image
                       src={crew.avatarUrl}
                       alt={crew.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                 ) : (
@@ -729,10 +732,12 @@ export default function CrewDetailsClient({
                     <div className="relative">
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-accent/30 to-purple-500/30 rounded-full blur-sm opacity-0 group-hover:opacity-60 transition-opacity" />
                       {member.user.image ? (
-                        <img
+                        <Image
                           src={member.user.image}
                           alt={getPublicDisplayName(member.user)}
-                          className="relative w-12 h-12 rounded-full border-2 border-[#2a2a2a]"
+                          width={48}
+                          height={48}
+                          className="relative rounded-full border-2 border-[#2a2a2a]"
                         />
                       ) : (
                         <div className="relative w-12 h-12 rounded-full bg-accent/10 border-2 border-[#2a2a2a] flex items-center justify-center">
@@ -918,10 +923,12 @@ export default function CrewDetailsClient({
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           {trade.user?.image ? (
-                            <img
+                            <Image
                               src={trade.user.image}
                               alt=""
-                              className="w-6 h-6 rounded-full border border-[#2a2a2a]"
+                              width={24}
+                              height={24}
+                              className="rounded-full border border-[#2a2a2a]"
                             />
                           ) : (
                             <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center border border-[#2a2a2a]">
@@ -1009,10 +1016,12 @@ export default function CrewDetailsClient({
                 >
                   <div className="flex items-center gap-4">
                     {request.user.image ? (
-                      <img
+                      <Image
                         src={request.user.image}
                         alt={getPublicDisplayName(request.user)}
-                        className="w-10 h-10 rounded-full border-2 border-[#2a2a2a]"
+                        width={40}
+                        height={40}
+                        className="rounded-full border-2 border-[#2a2a2a]"
                       />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center border-2 border-[#2a2a2a]">

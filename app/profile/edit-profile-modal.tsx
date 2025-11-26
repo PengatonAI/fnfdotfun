@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { X, Upload, Image as ImageIcon, User, FileText, MessageSquare } from "lucide-react";
 
@@ -230,10 +231,11 @@ export default function EditProfileModal({
               
               <div className="relative w-28 h-28 rounded-full bg-[#0a0a0a] border-2 border-[#2a2a2a] flex items-center justify-center overflow-hidden">
                 {displayImage ? (
-                  <img
+                  <Image
                     src={displayImage}
                     alt="Profile"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 ) : (
                   <span className="text-3xl font-bold text-white/40">

@@ -134,9 +134,9 @@ export async function GET(
     const endAt = challenge.endAt ? new Date(challenge.endAt) : null;
 
     // Helper function to calculate PnL for a crew
-    async function calculateCrewSnapshot(
+    const calculateCrewSnapshot = async (
       crew: typeof challenge.fromCrew
-    ): Promise<CrewPnLSnapshot> {
+    ): Promise<CrewPnLSnapshot> => {
       const memberPnLs: MemberPnL[] = [];
       let crewTotalPnl = 0;
       let crewRealizedPnl = 0;

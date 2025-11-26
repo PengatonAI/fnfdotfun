@@ -198,6 +198,7 @@ export default function ShareButtons({
                     )}
                     {/* Actual OG Image */}
                     {generatedCardId && (
+                      /* eslint-disable-next-line @next/next/no-img-element */
                       <img
                         src={`/pnl-card/${generatedCardId}/opengraph-image`}
                         alt="PnL Card Preview"

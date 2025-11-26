@@ -153,10 +153,12 @@ export function Navbar() {
           </Link>
           {session.user?.image && (
             <Link href="/profile">
-              <img
+              <Image
                 src={session.user.image}
                 alt={getPublicDisplayName(session.user as any)}
-                className="h-8 w-8 rounded-full cursor-pointer"
+                width={32}
+                height={32}
+                className="rounded-full cursor-pointer"
               />
             </Link>
           )}

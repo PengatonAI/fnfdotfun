@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import ChangePictureDialog from "./change-picture-dialog";
@@ -117,12 +118,13 @@ export default function ProfileForm({ user: initialUser }: ProfileFormProps) {
         <div className="mb-6">
           <label className="block text-sm font-medium mb-3">Profile Picture</label>
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-full bg-muted border border-border flex items-center justify-center overflow-hidden">
+            <div className="relative w-20 h-20 rounded-full bg-muted border border-border flex items-center justify-center overflow-hidden">
               {user.image ? (
-                <img
+                <Image
                   src={user.image}
                   alt="Profile"
-                  className="w-20 h-20 rounded-full object-cover"
+                  fill
+                  className="rounded-full object-cover"
                 />
               ) : (
                 <div className="text-2xl font-semibold text-muted-foreground">

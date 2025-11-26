@@ -6,6 +6,7 @@ import { fetcher } from "@/lib/swr-fetcher";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import ChangePictureDialog from "./change-picture-dialog";
 import EditProfileModal from "./edit-profile-modal";
 import PnLCardPreview from "@/components/pnl-card/pnl-card-preview";
@@ -289,10 +290,11 @@ export default function ProfileClient({
                 <div className="absolute -inset-1 bg-gradient-to-r from-accent/50 via-purple-500/50 to-pink-500/50 rounded-full opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300" />
                 {user.image ? (
                   <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-[#2a2a2a] shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-                    <img
+                    <Image
                       src={user.image}
                       alt={user.username || "Profile"}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                 ) : (
@@ -328,7 +330,7 @@ export default function ProfileClient({
                       className="flex items-center gap-2 px-3 py-1.5 bg-accent/10 border border-accent/30 rounded-full hover:bg-accent/20 transition-colors"
                     >
                       {crewMember.crew.avatarUrl ? (
-                        <img src={crewMember.crew.avatarUrl} alt="" className="w-4 h-4 rounded-full" />
+                        <Image src={crewMember.crew.avatarUrl} alt="" width={16} height={16} className="rounded-full" />
                       ) : (
                         <Users className="w-4 h-4 text-accent" />
                       )}

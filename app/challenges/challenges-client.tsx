@@ -6,6 +6,7 @@ import { fetcher } from "@/lib/swr-fetcher";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import CreateChallengeDialog from "./create-challenge-dialog";
 import SelectFromCrewDialog from "./select-from-crew-dialog";
 import InfoDialog from "./info-dialog";
@@ -215,10 +216,12 @@ function ChallengeCard({
             <div className="flex items-center space-x-4">
               <div className="flex items-center -space-x-2">
                 {challenge.fromCrew.avatarUrl ? (
-                  <img
+                  <Image
                     src={challenge.fromCrew.avatarUrl}
                     alt={challenge.fromCrew.name}
-                    className="h-10 w-10 rounded-full border-2 border-[#0a0a0a]"
+                    width={40}
+                    height={40}
+                    className="rounded-full border-2 border-[#0a0a0a]"
                   />
                 ) : (
                   <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center border-2 border-[#0a0a0a]">
@@ -228,10 +231,12 @@ function ChallengeCard({
                   </div>
                 )}
                 {challenge.toCrew.avatarUrl ? (
-                  <img
+                  <Image
                     src={challenge.toCrew.avatarUrl}
                     alt={challenge.toCrew.name}
-                    className="h-10 w-10 rounded-full border-2 border-[#0a0a0a]"
+                    width={40}
+                    height={40}
+                    className="rounded-full border-2 border-[#0a0a0a]"
                   />
                 ) : (
                   <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center border-2 border-[#0a0a0a]">
@@ -283,10 +288,12 @@ function ChallengeCard({
             <div className="flex items-center space-x-4">
               <div className="flex items-center -space-x-2">
                 {challenge.fromCrew.avatarUrl ? (
-                  <img
+                  <Image
                     src={challenge.fromCrew.avatarUrl}
                     alt={challenge.fromCrew.name}
-                    className="h-10 w-10 rounded-full border-2 border-[#0a0a0a]"
+                    width={40}
+                    height={40}
+                    className="rounded-full border-2 border-[#0a0a0a]"
                   />
                 ) : (
                   <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center border-2 border-[#0a0a0a]">
@@ -296,10 +303,12 @@ function ChallengeCard({
                   </div>
                 )}
                 {challenge.toCrew.avatarUrl ? (
-                  <img
+                  <Image
                     src={challenge.toCrew.avatarUrl}
                     alt={challenge.toCrew.name}
-                    className="h-10 w-10 rounded-full border-2 border-[#0a0a0a]"
+                    width={40}
+                    height={40}
+                    className="rounded-full border-2 border-[#0a0a0a]"
                   />
                 ) : (
                   <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center border-2 border-[#0a0a0a]">
@@ -351,10 +360,12 @@ function ChallengeCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {challenge.fromCrew.avatarUrl ? (
-                <img
+                <Image
                   src={challenge.fromCrew.avatarUrl}
                   alt={challenge.fromCrew.name}
-                  className="h-12 w-12 rounded-full border-2 border-[#2a2a2a]"
+                  width={48}
+                  height={48}
+                  className="rounded-full border-2 border-[#2a2a2a]"
                 />
               ) : (
                 <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center border-2 border-[#2a2a2a]">
@@ -411,10 +422,12 @@ function ChallengeCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {challenge.toCrew.avatarUrl ? (
-              <img
+              <Image
                 src={challenge.toCrew.avatarUrl}
                 alt={challenge.toCrew.name}
-                className="h-12 w-12 rounded-full border-2 border-[#2a2a2a]"
+                width={48}
+                height={48}
+                className="rounded-full border-2 border-[#2a2a2a]"
               />
             ) : (
               <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center border-2 border-[#2a2a2a]">

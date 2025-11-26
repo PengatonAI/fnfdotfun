@@ -1,6 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { X, Users, ChevronRight } from "lucide-react";
 
@@ -80,10 +81,12 @@ export default function SelectFromCrewDialog({
                 className="w-full flex items-center gap-4 p-4 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a]/50 hover:bg-[#0a0a0a] hover:border-[#2a2a2a] transition-all text-left group"
               >
                 {crew.avatarUrl ? (
-                  <img
+                  <Image
                     src={crew.avatarUrl}
                     alt={crew.name}
-                    className="h-12 w-12 rounded-full border-2 border-[#2a2a2a]"
+                    width={48}
+                    height={48}
+                    className="rounded-full border-2 border-[#2a2a2a]"
                   />
                 ) : (
                   <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center border-2 border-[#2a2a2a]">

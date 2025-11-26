@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/swr-fetcher";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface User {
@@ -198,10 +199,12 @@ export default function ChallengeBattleClient({
               <p className="text-lg text-muted-foreground mb-2">Winner</p>
               <div className="flex items-center justify-center gap-4">
                 {challenge.winnerCrew.avatarUrl ? (
-                  <img
+                  <Image
                     src={challenge.winnerCrew.avatarUrl}
                     alt={challenge.winnerCrew.name}
-                    className="h-16 w-16 rounded-full"
+                    width={64}
+                    height={64}
+                    className="rounded-full"
                   />
                 ) : (
                   <div className="h-16 w-16 rounded-full bg-primary flex items-center justify-center">
@@ -327,10 +330,12 @@ export default function ChallengeBattleClient({
             >
               <div className="flex items-center gap-4 mb-6">
                 {pnlData.fromCrew.avatarUrl ? (
-                  <img
+                  <Image
                     src={pnlData.fromCrew.avatarUrl}
                     alt={pnlData.fromCrew.crewName}
-                    className="h-14 w-14 rounded-full"
+                    width={56}
+                    height={56}
+                    className="rounded-full"
                   />
                 ) : (
                   <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
@@ -382,10 +387,12 @@ export default function ChallengeBattleClient({
                     >
                       <div className="flex items-center gap-2">
                         {member.image ? (
-                          <img
+                          <Image
                             src={member.image}
                             alt={member.username || "Member"}
-                            className="h-6 w-6 rounded-full"
+                            width={24}
+                            height={24}
+                            className="rounded-full"
                           />
                         ) : (
                           <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
@@ -428,10 +435,12 @@ export default function ChallengeBattleClient({
             >
               <div className="flex items-center gap-4 mb-6">
                 {pnlData.toCrew.avatarUrl ? (
-                  <img
+                  <Image
                     src={pnlData.toCrew.avatarUrl}
                     alt={pnlData.toCrew.crewName}
-                    className="h-14 w-14 rounded-full"
+                    width={56}
+                    height={56}
+                    className="rounded-full"
                   />
                 ) : (
                   <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
@@ -483,10 +492,12 @@ export default function ChallengeBattleClient({
                     >
                       <div className="flex items-center gap-2">
                         {member.image ? (
-                          <img
+                          <Image
                             src={member.image}
                             alt={member.username || "Member"}
-                            className="h-6 w-6 rounded-full"
+                            width={24}
+                            height={24}
+                            className="rounded-full"
                           />
                         ) : (
                           <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">

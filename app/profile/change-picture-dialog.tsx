@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { X, Upload, Image as ImageIcon } from "lucide-react";
 
@@ -146,16 +147,18 @@ export default function ChangePictureDialog({
             
             <div className="relative w-32 h-32 rounded-full bg-[#0a0a0a] border-2 border-[#2a2a2a] flex items-center justify-center overflow-hidden">
               {preview ? (
-                <img
+                <Image
                   src={preview}
                   alt="Preview"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               ) : currentImage ? (
-                <img
+                <Image
                   src={currentImage}
                   alt="Current"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <ImageIcon className="w-12 h-12 text-white/20" />
