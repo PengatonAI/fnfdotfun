@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ crewId: string }> }
 ) {
   try {
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -127,4 +131,3 @@ export async function GET(
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }
-

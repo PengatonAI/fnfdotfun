@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 // GET - Fetch crew by ID with members
 export async function GET(
@@ -8,6 +9,9 @@ export async function GET(
   { params }: { params: Promise<{ crewId: string }> }
 ) {
   try {
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -25,7 +29,7 @@ export async function GET(
         createdBy: {
           select: {
             id: true,
-            name: true, // Keep for internal use only
+            name: true,
             email: true,
             image: true,
             username: true,
@@ -37,11 +41,11 @@ export async function GET(
             user: {
               select: {
                 id: true,
-            name: true, // Keep for internal use only
-            email: true,
-            image: true,
-            username: true,
-            xHandle: true,
+                name: true,
+                email: true,
+                image: true,
+                username: true,
+                xHandle: true,
               },
             },
           },
@@ -54,11 +58,11 @@ export async function GET(
             user: {
               select: {
                 id: true,
-            name: true, // Keep for internal use only
-            email: true,
-            image: true,
-            username: true,
-            xHandle: true,
+                name: true,
+                email: true,
+                image: true,
+                username: true,
+                xHandle: true,
               },
             },
           },
@@ -93,6 +97,9 @@ export async function PATCH(
   { params }: { params: Promise<{ crewId: string }> }
 ) {
   try {
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -219,11 +226,11 @@ export async function PATCH(
           createdBy: {
             select: {
               id: true,
-            name: true, // Keep for internal use only
-            email: true,
-            image: true,
-            username: true,
-            xHandle: true,
+              name: true,
+              email: true,
+              image: true,
+              username: true,
+              xHandle: true,
             },
           },
           members: {
@@ -231,11 +238,11 @@ export async function PATCH(
               user: {
                 select: {
                   id: true,
-            name: true, // Keep for internal use only
-            email: true,
-            image: true,
-            username: true,
-            xHandle: true,
+                  name: true,
+                  email: true,
+                  image: true,
+                  username: true,
+                  xHandle: true,
                 },
               },
             },
@@ -269,4 +276,3 @@ export async function PATCH(
     );
   }
 }
-

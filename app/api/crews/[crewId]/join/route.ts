@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ crewId: string }> }
 ) {
   try {
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -124,4 +128,3 @@ export async function POST(
     );
   }
 }
-
