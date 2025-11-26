@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 
-// Common include for challenge queries
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+// Common include for challenge queries (plain object - safe at top level)
 const challengeInclude = {
   fromCrew: {
     select: {
@@ -77,6 +78,10 @@ export async function POST(
   { params }: { params: Promise<{ challengeId: string }> }
 ) {
   try {
+    // Dynamic imports to prevent build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -189,4 +194,3 @@ export async function POST(
     );
   }
 }
-

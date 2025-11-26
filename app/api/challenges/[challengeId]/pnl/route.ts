@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { computePnL } from "@/lib/pnl/engine";
-import { filterTrades } from "@/lib/leaderboard/engine";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 interface MemberPnL {
   userId: string;
@@ -31,6 +30,12 @@ export async function GET(
   { params }: { params: Promise<{ challengeId: string }> }
 ) {
   try {
+    // Dynamic imports to prevent build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { computePnL } = await import("@/lib/pnl/engine");
+    const { filterTrades } = await import("@/lib/leaderboard/engine");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -188,7 +193,7 @@ export async function GET(
         totalTrades: crewTotalTrades,
         members: memberPnLs,
       };
-    }
+    };
 
     // Calculate PnL for both crews in parallel
     const [fromCrewSnapshot, toCrewSnapshot] = await Promise.all([
@@ -213,4 +218,3 @@ export async function GET(
     );
   }
 }
-

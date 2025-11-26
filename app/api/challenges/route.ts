@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { finalizeOverdueChallenges } from "@/lib/challenges/finalize-challenge";
 
-// Common include for challenge queries
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+// Common include for challenge queries (plain object - safe at top level)
 const challengeInclude = {
   fromCrew: {
     select: {
@@ -75,6 +75,11 @@ const challengeInclude = {
 // GET /api/challenges - List challenges for the current user
 export async function GET(request: Request) {
   try {
+    // Dynamic imports to prevent build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { finalizeOverdueChallenges } = await import("@/lib/challenges/finalize-challenge");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -174,6 +179,10 @@ export async function GET(request: Request) {
 // POST /api/challenges - Create a new challenge
 export async function POST(request: Request) {
   try {
+    // Dynamic imports to prevent build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -337,4 +346,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

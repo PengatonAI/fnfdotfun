@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 // GET /api/challenges/unread-count - Get count of pending incoming challenges
 export async function GET() {
   try {
+    // Dynamic imports to prevent build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -48,4 +53,3 @@ export async function GET() {
     );
   }
 }
-
