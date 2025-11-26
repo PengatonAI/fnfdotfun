@@ -1,3 +1,5 @@
+import { NextRequest } from "next/server";
+
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
@@ -7,7 +9,7 @@ async function getHandlers() {
   return handlers;
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const handlers = await getHandlers();
     return handlers.GET(request);
@@ -20,7 +22,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const handlers = await getHandlers();
     return handlers.POST(request);
