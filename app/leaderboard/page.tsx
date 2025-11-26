@@ -16,8 +16,7 @@ async function getCurrentUserBasicInfo(userId: string) {
         id: true,
         username: true,
         image: true,
-        crewMemberships: {
-          where: { status: "ACTIVE" },
+        crews: {
           select: {
             crew: {
               select: {
@@ -38,7 +37,7 @@ async function getCurrentUserBasicInfo(userId: string) {
       id: user.id,
       username: user.username,
       image: user.image,
-      crew: user.crewMemberships[0]?.crew || null,
+      crew: user.crews[0]?.crew || null,
     };
   } catch (error) {
     console.error("Error fetching user info:", error);
