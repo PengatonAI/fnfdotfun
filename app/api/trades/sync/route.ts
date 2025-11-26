@@ -177,11 +177,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error syncing trades:", error);
-    
-    // Set error in progress tracker
     const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    setError(errorMessage);
+    console.error("Trade sync error:", errorMessage);
     
     return NextResponse.json(
       { 
