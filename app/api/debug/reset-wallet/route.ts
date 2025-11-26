@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; 
-import { normalizeChain } from "@/lib/utils/normalize-chain";
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +12,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // Dynamic imports to avoid build-time initialization
+    const { prisma } = await import("@/lib/prisma");
+    const { normalizeChain } = await import("@/lib/utils/normalize-chain");
+
     const normalizedChain = normalizeChain(chain);
     
     // 1. Find the wallet

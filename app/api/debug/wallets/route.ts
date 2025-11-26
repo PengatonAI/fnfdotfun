@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -10,6 +11,9 @@ export async function GET() {
         { status: 403 }
       );
     }
+
+    // Dynamic import to avoid build-time Prisma initialization
+    const { prisma } = await import("@/lib/prisma");
 
     // Fetch all wallets with selected fields
     const wallets = await prisma.wallet.findMany({

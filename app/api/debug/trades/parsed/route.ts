@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { buildTradeFromTransfers } from "@/lib/trades/evm-sync";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -12,6 +11,11 @@ export async function GET() {
         { status: 403 }
       );
     }
+
+    // Dynamic imports to avoid build-time initialization
+    const { auth } = await import("@/lib/auth");
+    const { prisma } = await import("@/lib/prisma");
+    const { buildTradeFromTransfers } = await import("@/lib/trades/evm-sync");
 
     // Require valid session
     const session = await auth();
