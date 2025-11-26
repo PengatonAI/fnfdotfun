@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 
 export const dynamic = 'force-dynamic'; // No caching
 
@@ -19,6 +18,9 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // Dynamic import to avoid build-time Prisma initialization
+    const { prisma } = await import("@/lib/prisma");
+
     // Find the most recent trade for this wallet
     const trade = await prisma.trade.findFirst({
       where: {
