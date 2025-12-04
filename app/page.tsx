@@ -4,21 +4,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  const splineUrl = process.env.NEXT_PUBLIC_SPLINE_URL || "";
-
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       {/* Spline Background */}
       <div className="absolute inset-0 z-0">
-        {splineUrl ? (
-          <iframe
-            src={splineUrl}
-            className="absolute inset-0 h-full w-full border-0"
-            title="Spline 3D Background"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900" />
-        )}
+        <iframe
+          src="https://my.spline.design/orb-64udLSM0uSMRG1INH7hPLDLV/"
+          frameBorder="0"
+          className="absolute inset-0 w-full h-full"
+          style={{ pointerEvents: "none" }}
+          title="FNFDOTFUN 3D Orb"
+        />
         {/* 40% Black Overlay */}
         <div className="absolute inset-0 bg-black/40" />
       </div>
