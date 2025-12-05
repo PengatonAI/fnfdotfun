@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sanitizeUsername, isValidUsername } from "@/lib/security/validation";
 
 export const dynamic = "force-dynamic";
 
@@ -20,23 +21,25 @@ export async function PATCH(request: Request) {
     const body = await request.json();
     const { username } = body;
 
-    if (username && typeof username !== "string") {
-      return NextResponse.json(
-        { error: "Username must be a string" },
-        { status: 400 }
-      );
-    }
-
-    // Validate username format (alphanumeric, underscore, 3-20 chars)
-    if (username) {
-      const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-      if (!usernameRegex.test(username)) {
+    // SECURITY: Validate and sanitize username
+    if (username !== undefined && username !== null) {
+      if (typeof username !== "string") {
+        return NextResponse.json(
+          { error: "Username must be a string" },
+          { status: 400 }
+        );
+      }
+      
+      if (!isValidUsername(username)) {
         return NextResponse.json(
           { error: "Username must be 3-20 characters and contain only letters, numbers, and underscores" },
           { status: 400 }
         );
       }
     }
+    
+    // Sanitize username (already validated format, just trim)
+    const sanitizedUsername = username ? username.trim() : null;
 
     // Check if username is already taken
     if (username) {
@@ -55,7 +58,7 @@ export async function PATCH(request: Request) {
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: {
-        username: username || null,
+        username: sanitizedUsername,
       },
       select: {
         id: true,

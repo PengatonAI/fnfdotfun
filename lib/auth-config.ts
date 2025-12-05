@@ -116,7 +116,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false
+        // SECURITY: Use secure cookies in production (HTTPS only)
+        // Allow HTTP in development for local testing
+        secure: process.env.NODE_ENV === 'production',
       }
     },
     callbackUrl: {
@@ -124,7 +126,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       options: {
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: process.env.NODE_ENV === 'production',
       }
     },
     csrfToken: {
@@ -133,7 +135,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: process.env.NODE_ENV === 'production',
       }
     },
     pkceCodeVerifier: {
@@ -142,7 +144,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: process.env.NODE_ENV === 'production',
       }
     },
     state: {
@@ -151,7 +153,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: process.env.NODE_ENV === 'production',
       }
     },
   },
@@ -159,15 +161,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async redirect({ url, baseUrl }) {
       console.log("Redirect debug:", { url, baseUrl, NEXTAUTH_URL: process.env.NEXTAUTH_URL });
+      // SECURITY: Only allow redirects to same origin to prevent open redirect attacks
       // If url is relative, make it absolute
       if (url.startsWith("/")) {
         return `${baseUrl}${url}`;
       }
-      // If url is on same origin, allow it
-      if (new URL(url).origin === baseUrl) {
-        return url;
+      // Parse URL and validate origin
+      try {
+        const urlObj = new URL(url);
+        // Only allow redirects to the same origin
+        if (urlObj.origin === baseUrl) {
+          return url;
+        }
+      } catch (error) {
+        // Invalid URL - redirect to baseUrl for safety
+        console.warn("Invalid redirect URL:", url);
       }
-      // Otherwise redirect to baseUrl
+      // Default to baseUrl for any external or invalid URLs
       return baseUrl;
     },
     async signIn({ user, account, profile }) {

@@ -1,9 +1,35 @@
 import { NextResponse } from "next/server";
+import { rateLimit, getClientIP } from "@/lib/security/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    // SECURITY: Rate limiting for trade sync endpoint (prevent abuse)
+    const clientIP = getClientIP(request);
+    const rateLimitResult = rateLimit(`sync:${clientIP}`, {
+      windowMs: 60 * 1000, // 1 minute window
+      maxRequests: 5, // Max 5 syncs per minute per IP
+    });
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          error: rateLimitResult.error || "Too many requests",
+          retryAfter: Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000),
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString(),
+            'X-RateLimit-Limit': '5',
+            'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+            'X-RateLimit-Reset': new Date(rateLimitResult.resetTime).toISOString(),
+          },
+        }
+      );
+    }
+
     // Dynamic imports to avoid build-time initialization
     const { auth } = await import("@/lib/auth");
     const { prisma } = await import("@/lib/prisma");

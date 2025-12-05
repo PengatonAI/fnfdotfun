@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireDebugAccess } from "@/lib/security/debug-guard";
 
 /**
  * Diagnostic endpoint to check Twitter OAuth configuration and test API connectivity
  * Access at: /api/debug/twitter-oauth
+ * SECURITY: Debug endpoint - only available in development mode
  */
 export async function GET(request: NextRequest) {
+  // SECURITY: Block access in production
+  const debugCheck = requireDebugAccess();
+  if (debugCheck) {
+    return debugCheck;
+  }
+
   try {
     const diagnostics: any = {
       timestamp: new Date().toISOString(),

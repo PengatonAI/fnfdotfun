@@ -85,31 +85,27 @@ export default async function PublicCardPage({
         fontFamily: "system-ui, sans-serif",
       }}
     >
-      {/* CSS for hover effect */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            .download-btn {
-              background-color: #0891b2;
-              padding: 12px 24px;
-              border-radius: 10px;
-              font-weight: 600;
-              color: white;
-              text-decoration: none;
-              box-shadow: 0 0 15px rgba(6,182,212,0.5);
-              transition: all 0.15s ease;
-              display: inline-flex;
-              align-items: center;
-              gap: 8px;
-            }
-            .download-btn:hover {
-              background-color: #0e7490;
-              box-shadow: 0 0 25px rgba(6,182,212,0.7);
-              transform: translateY(-1px);
-            }
-          `,
-        }}
-      />
+      {/* SECURITY: Use inline styles instead of dangerouslySetInnerHTML */}
+      <style>{`
+        .download-btn {
+          background-color: #0891b2;
+          padding: 12px 24px;
+          border-radius: 10px;
+          font-weight: 600;
+          color: white;
+          text-decoration: none;
+          box-shadow: 0 0 15px rgba(6,182,212,0.5);
+          transition: all 0.15s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .download-btn:hover {
+          background-color: #0e7490;
+          box-shadow: 0 0 25px rgba(6,182,212,0.7);
+          transform: translateY(-1px);
+        }
+      `}</style>
 
       {/* Download Button */}
       <div

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildTradeFromTransfers } from "@/lib/trades/evm-sync";
 import { getHistoricalNativePrice } from "@/lib/price/historical";
+import { requireDebugAccess } from "@/lib/security/debug-guard";
 
 export const dynamic = 'force-dynamic'; // No caching
 
@@ -211,7 +212,16 @@ async function fetchTransfersByTxHash(
   return uniqueTransfers;
 }
 
+/**
+ * SECURITY: Debug endpoint - only available in development mode
+ */
 export async function GET(req: NextRequest) {
+  // SECURITY: Block access in production
+  const debugCheck = requireDebugAccess();
+  if (debugCheck) {
+    return debugCheck;
+  }
+
   const { searchParams } = new URL(req.url);
   const txHash = searchParams.get("txHash");
   const chain = searchParams.get("chain") || "arbitrum";

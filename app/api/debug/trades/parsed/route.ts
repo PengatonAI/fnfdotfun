@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
+import { requireDebugAccess } from "@/lib/security/debug-guard";
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * SECURITY: Debug endpoint - only available in development mode
+ */
 export async function GET() {
   try {
-    // Only allow in development environment
-    if (process.env.NODE_ENV !== "development") {
-      return NextResponse.json(
-        { error: "This endpoint is only available in development environment" },
-        { status: 403 }
-      );
+    // SECURITY: Block access in production
+    const debugCheck = requireDebugAccess();
+    if (debugCheck) {
+      return debugCheck;
     }
 
     // Dynamic imports to avoid build-time initialization

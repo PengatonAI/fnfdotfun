@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireDebugAccess } from "@/lib/security/debug-guard";
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * SECURITY: Debug endpoint - only available in development mode
+ */
 export async function GET(req: NextRequest) {
+  // SECURITY: Block access in production
+  const debugCheck = requireDebugAccess();
+  if (debugCheck) {
+    return debugCheck;
+  }
+
   const { searchParams } = new URL(req.url);
   const walletAddress = searchParams.get("walletAddress");
   const chain = searchParams.get("chain");

@@ -19,6 +19,22 @@ export async function GET(
 
     const { crewId } = await params;
 
+    // SECURITY: Verify user is a member of the crew before showing PnL data
+    // This prevents unauthorized access to other crews' trading performance
+    const userMembership = await prisma.crewMember.findFirst({
+      where: {
+        crewId,
+        userId: session.user.id,
+      },
+    });
+
+    if (!userMembership) {
+      return NextResponse.json(
+        { error: "You must be a member of this crew to view its PnL" },
+        { status: 403 }
+      );
+    }
+
     // Fetch crew members
     const crewMembers = await prisma.crewMember.findMany({
       where: { crewId },

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sanitizeCrewName, sanitizeString, isValidDescription } from "@/lib/security/validation";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -122,6 +123,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, description, openToMembers = true } = body;
 
+    // SECURITY: Validate and sanitize input
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return NextResponse.json(
         { error: "Crew name is required" },
@@ -129,25 +131,29 @@ export async function POST(request: Request) {
       );
     }
 
-    if (name.length > 100) {
+    let sanitizedName: string;
+    try {
+      sanitizedName = sanitizeCrewName(name);
+    } catch (error) {
       return NextResponse.json(
-        { error: "Crew name must be 100 characters or less" },
+        { error: error instanceof Error ? error.message : "Invalid crew name format" },
         { status: 400 }
       );
     }
 
-    if (description && typeof description !== "string") {
-      return NextResponse.json(
-        { error: "Description must be a string" },
-        { status: 400 }
-      );
-    }
-
-    if (description && description.length > 500) {
-      return NextResponse.json(
-        { error: "Description must be 500 characters or less" },
-        { status: 400 }
-      );
+    if (description !== undefined && description !== null) {
+      if (typeof description !== "string") {
+        return NextResponse.json(
+          { error: "Description must be a string or null" },
+          { status: 400 }
+        );
+      }
+      if (!isValidDescription(description)) {
+        return NextResponse.json(
+          { error: "Description must be 500 characters or less" },
+          { status: 400 }
+        );
+      }
     }
 
     if (typeof openToMembers !== "boolean") {
@@ -157,12 +163,15 @@ export async function POST(request: Request) {
       );
     }
 
+    // SECURITY: Sanitize description to prevent XSS
+    const sanitizedDescription = description ? sanitizeString(description, 500) : null;
+
     // Create crew and add creator as first member in a transaction
     const crew = await prisma.$transaction(async (tx) => {
       const newCrew = await tx.crew.create({
         data: {
-          name: name.trim(),
-          description: description?.trim() || null,
+          name: sanitizedName,
+          description: sanitizedDescription,
           openToMembers: openToMembers,
           createdByUserId: session.user.id,
         },
